@@ -118,3 +118,101 @@ exports.checkVulnLines = () => async (req: Request<{}, {}, VerdictRequestBody>, 
     })
   }
 }
+
+
+
+exports.checkVulnLines = () => async (req: Request<{}, {}, VerdictRequestBody>, res: Response, next: NextFunction) => {
+  const key = req.body.key
+  let snippetData
+  try {
+    snippetData = await retrieveCodeSnippet(key)
+    if (!snippetData) {
+      res.status(404).json({ status: 'error', error: `No code challenge for challenge key: ${key}` })
+      return
+    }
+  } catch (error) {
+    const statusCode = setStatusCode(error)
+    res.status(statusCode).json({ status: 'error', error: utils.getErrorMessage(error) })
+    return
+  }
+  const vulnLines: number[] = snippetData.vulnLines
+  const neutralLines: number[] = snippetData.neutralLines
+  const selectedLines: number[] = req.body.selectedLines
+  const verdict = getVerdict(vulnLines, neutralLines, selectedLines)
+  let hint
+  if (fs.existsSync('./data/static/codefixes/' + key + '.info.yml')) {
+    const codingChallengeInfos = yaml.load(fs.readFileSync('./data/static/codefixes/' + key + '.info.yml', 'utf8'))
+    if (codingChallengeInfos?.hints) {
+      if (accuracy.getFindItAttempts(key) > codingChallengeInfos.hints.length) {
+        if (vulnLines.length === 1) {
+          hint = res.__('Line {{vulnLine}} is responsible for this vulnerability or security flaw. Select it and submit to proceed.', { vulnLine: vulnLines[0].toString() })
+        } else {
+          hint = res.__('Lines {{vulnLines}} are responsible for this vulnerability or security flaw. Select them and submit to proceed.', { vulnLines: vulnLines.toString() })
+        }
+      } else {
+        const nextHint = codingChallengeInfos.hints[accuracy.getFindItAttempts(key) - 1] // -1 prevents after first attempt
+        if (nextHint) hint = res.__(nextHint)
+      }
+    }
+  }
+  if (verdict) {
+    await challengeUtils.solveFindIt(key)
+    res.status(200).json({
+      verdict: true
+    })
+  } else {
+    accuracy.storeFindItVerdict(key, false)
+    res.status(200).json({
+      verdict: false,
+      hint
+    })
+  }
+}
+
+exports.checkVulnLines = () => async (req: Request<{}, {}, VerdictRequestBody>, res: Response, next: NextFunction) => {
+  const key = req.body.key
+  let snippetData
+  try {
+    snippetData = await retrieveCodeSnippet(key)
+    if (!snippetData) {
+      res.status(404).json({ status: 'error', error: `No code challenge for challenge key: ${key}` })
+      return
+    }
+  } catch (error) {
+    const statusCode = setStatusCode(error)
+    res.status(statusCode).json({ status: 'error', error: utils.getErrorMessage(error) })
+    return
+  }
+  const vulnLines: number[] = snippetData.vulnLines
+  const neutralLines: number[] = snippetData.neutralLines
+  const selectedLines: number[] = req.body.selectedLines
+  const verdict = getVerdict(vulnLines, neutralLines, selectedLines)
+  let hint
+  if (fs.existsSync('./data/static/codefixes/' + key + '.info.yml')) {
+    const codingChallengeInfos = yaml.load(fs.readFileSync('./data/static/codefixes/' + key + '.info.yml', 'utf8'))
+    if (codingChallengeInfos?.hints) {
+      if (accuracy.getFindItAttempts(key) > codingChallengeInfos.hints.length) {
+        if (vulnLines.length === 1) {
+          hint = res.__('Line {{vulnLine}} is responsible for this vulnerability or security flaw. Select it and submit to proceed.', { vulnLine: vulnLines[0].toString() })
+        } else {
+          hint = res.__('Lines {{vulnLines}} are responsible for this vulnerability or security flaw. Select them and submit to proceed.', { vulnLines: vulnLines.toString() })
+        }
+      } else {
+        const nextHint = codingChallengeInfos.hints[accuracy.getFindItAttempts(key) - 1] // -1 prevents after first attempt
+        if (nextHint) hint = res.__(nextHint)
+      }
+    }
+  }
+  if (verdict) {
+    await challengeUtils.solveFindIt(key)
+    res.status(200).json({
+      verdict: true
+    })
+  } else {
+    accuracy.storeFindItVerdict(key, false)
+    res.status(200).json({
+      verdict: false,
+      hint
+    })
+  }
+}
