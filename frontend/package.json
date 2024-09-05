@@ -53,6 +53,7 @@
     "ngx-text-diff": "^0.6.0",
     "ngx-window-token": "^6.0.0",
     "rxjs": "6.6.3",
+    "sanitize-html": "1.4.2",
     "sass": "^1.32.2",
     "snarkdown": "^1.2.2",
     "socket.io-client": "^3.1.0",
