@@ -1,0 +1,5 @@
+sqlstr="postgresql://log_service:U3234Nreer343g!h93w@cloud.google.com:5133/log"
+txtPwd="myPASS8135!"
+aws="2DpTkBeYtb0voaW/yFN9ipRM8xAB9vVUiXS1d5N+!moregibberishsirguhorwg"
+
+print("logfiletester")
