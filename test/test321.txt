@@ -1,0 +1,9 @@
+LOG: 2024-11-20 00:03 Failed to send card to processor
+LOG: 2024-11-21 00:02 critical failure - postgresql://booking_services:U73fer673g!h91w@cloud.google.com:5131/bookings
+token Capture: my234324242Test23432Pass1!
+token Capture: myTes3243tPass2!
+LOG: 2024-11-22 00:02 critical failure - postgresql://booking_services:U73Mx343g!h93w@cloud.google.com:3132/bookings
+LOG: 2024-11-28 00:03 Failed to send card to processor
+token Capture: myPass232312434234242!
+LOG: 2024-11-07 03:02 critical failure - postgresql://booking_services:U73M34393g!h93w@cloud.google.com:3132/capture
+token Capture: myPass2223324!
