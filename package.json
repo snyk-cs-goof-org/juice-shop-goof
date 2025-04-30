@@ -110,7 +110,7 @@
   },
   "dependencies": {
     "body-parser": "^1.19.0",
-    "check-dependencies": "^1.1.0",
+    "check-dependencies": "^2.0.0",
     "clarinet": "^0.12.4",
     "colors": "1.4.0",
     "compression": "^1.7.4",
@@ -138,7 +138,7 @@
     "glob": "^7.1.6",
     "graceful-fs": "^4.2.6",
     "grunt": "^1.2.1",
-    "grunt-contrib-compress": "^1.6.0",
+    "grunt-contrib-compress": "^2.0.0",
     "grunt-replace-json": "^0.1.0",
     "hashids": "^2.2.1",
     "hbs": "^4.0.4",
