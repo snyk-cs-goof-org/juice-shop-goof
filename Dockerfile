@@ -7,7 +7,7 @@ RUN npm dedupe
 RUN rm -rf frontend/node_modules
 RUN rm -rf frontend/.angular
 RUN rm -rf frontend/src/assets
-RUN mkdir logs
+RUN mkdir -p logs
 RUN chown -R 65532 logs
 RUN chgrp -R 0 ftp/ frontend/dist/ logs/ data/ i18n/
 RUN chmod -R g=u ftp/ frontend/dist/ logs/ data/ i18n/
@@ -15,9 +15,9 @@ RUN rm data/chatbot/botDefaultTrainingData.json || true
 RUN rm ftp/legal.md || true
 RUN rm i18n/*.json || true
 
-ARG CYCLONEDX_NPM_VERSION=latest
-RUN npm install -g @cyclonedx/cyclonedx-npm@$CYCLONEDX_NPM_VERSION
-RUN npm run sbom
+# ARG CYCLONEDX_NPM_VERSION=latest
+# RUN npm install -g @cyclonedx/cyclonedx-npm@$CYCLONEDX_NPM_VERSION
+# RUN npm run sbom
 
 # workaround for libxmljs startup error
 FROM node:20-buster as libxmljs-builder
