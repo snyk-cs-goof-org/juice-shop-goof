@@ -1,6 +1,8 @@
 name: Build Image and Test with Snyk
 
 on:
+  workflow_dispatch:
+  workflow_call:
   push:
     branches:
     - master
