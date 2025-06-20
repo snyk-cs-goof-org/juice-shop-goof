@@ -1,0 +1,5 @@
+LOG: 2025-06-20 00:02 critical failure - postgresql://booking_services:Ufder34hds93w@cloud.google.com:5135/bookings
+LOG: 2025-06-20 00:03 Failed to send card to processor
+token Capture: myPass1fd3gf5!
+LOG: 2025-06-01 03:02 critical failure - postgresql://booking_services:U23x673g!hds93w@cloud.google.com:5235/capture
+token Capture: myPass1fd3gf5!
