@@ -24,9 +24,10 @@ jobs:
         node-version: '18' 
     - name: NPM install
       run: npm install
-    # Install and Authenticate to Snyk
-    - name: Snyk Action
-      uses: snyk/actions/setup@master
+    - name: Install & authenticate Snyk
+      uses: snyk/actions/setup@v3
+      with:
+        token: ${{ secrets.SNYK_TOKEN }}
     - name: Snyk-to-html
       run: npm install -g snyk-to-html
     # Run Snyk Open Source
