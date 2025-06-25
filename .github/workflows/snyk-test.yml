@@ -1,0 +1,58 @@
+name: "Snyk Open Source"
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  Pipeline-Job:
+    # Configure Environment
+    name: 'Snyk Open Source'
+    runs-on: ubuntu-latest
+    env: 
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+       
+    steps:
+    # Checkout Code
+    - name: Checkout Code
+      uses: actions/checkout@v1
+    # Set up Node.js with a compatible version
+    - name: Set up Node.js 14.x
+      uses: actions/setup-node@v4 # Use a newer version of setup-node
+      with:
+        node-version: '14' # Specify Node.js version 14, as recommended by juice-shop
+    - name: NPM install
+      run: npm install
+    # Install and Authenticate to Snyk
+    - name: Snyk Action
+      uses: snyk/actions/setup@master
+    - name: Snyk-to-html
+      run: npm install -g snyk-to-html
+    # Run Snyk Open Source
+    - name: Run Snyk Open Source
+      run: |
+         snyk test --severity-threshold=high --all-projects --json-file-output=results.html 
+         snyk-to-html -o ./results.html
+      continue-on-error: true
+    - name: Snyk Open Source Monitor
+      run: |
+         snyk monitor --severity-threshold=high --all-projects
+      continue-on-error: true
+    - name: Generate CycloneDX SBOM for All Projects
+      run: |
+        snyk sbom --all-projects --format=cyclonedx1.4+json --experimental --json-file-output=juice-shop-cdx.json
+      continue-on-error: true
+    # Upload Artifacts
+    - name: Upload snyk html
+      uses: actions/upload-artifact@v4.6.1
+      with:
+        name: snyk-results
+        path: |
+          ./results.html
+    - name: Upload CycloneDX SBOM
+      uses: actions/upload-artifact@v4.6.1
+      with:
+        name: juice-shop-cdx-sbom # Name for this artifact
+        path: ./juice-shop-cdx.json
+    
