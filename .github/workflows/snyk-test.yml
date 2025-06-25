@@ -23,7 +23,7 @@ jobs:
       with:
         node-version: '18' 
     - name: NPM install
-      run: npm ci
+      run: npm install
     # Install and Authenticate to Snyk
     - name: Snyk Action
       uses: snyk/actions/setup@master
