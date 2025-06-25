@@ -18,12 +18,12 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v1
     # Set up Node.js with a compatible version
-    - name: Set up Node.js 14.x
+    - name: Set up Node.js 18.x
       uses: actions/setup-node@v4 # Use a newer version of setup-node
       with:
-        node-version: '14' # Specify Node.js version 14, as recommended by juice-shop
+        node-version: '18' 
     - name: NPM install
-      run: npm install
+      run: npm ci
     # Install and Authenticate to Snyk
     - name: Snyk Action
       uses: snyk/actions/setup@master
