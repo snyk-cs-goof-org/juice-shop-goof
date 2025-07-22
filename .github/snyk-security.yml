@@ -1,0 +1,68 @@
+name: Snyk Security CI 
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [19.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm install
+      - run: npm i -g snyk
+      - run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      - name: install snyk-to-html
+        run: |
+          npm install snyk-to-html -g
+
+      - name: Snyk Open Source # For testing and failing please add snyk test before snyk monitor
+        run: |
+          snyk test --json | snyk-to-html -o results-opensource.html || true
+          
+      - name: Use the Upload Artifact GitHub Action
+        uses: actions/upload-artifact@v3
+        with:
+          name: results-opensource
+          path: results-opensource.html
+
+      - name: Snyk Code # Remove || true to fail if there are vulnerabilities
+        run: |
+          snyk code test --json | snyk-to-html -o results-code.html || true
+          snyk code test --sarif > snyk-code.sarif || true
+
+#      - name: Use the Upload Artifact GitHub Action
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: results-code
+#          path: results-code.html
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk-code.sarif
+      
+      - name: Snyk IaC # Remove || true to fail if there are vulnerabilities
+        run: |
+         snyk iac test --report || true
+     
+      - name: Snyk Container # Rename your image, for testing and failing please add snyk container test before snyk container monitor
+        run: |
+          snyk container test freshdemo/juice-shop-github-dockerhub-gke:actions --file=Dockerfile 
